@@ -3405,5 +3405,21 @@
   "com_ui_tool_approval_connection_unavailable": "Approval cannot be remembered for this connection. Each call requires review.",
   "com_ui_tool_approval_remember_disabled": "Remembered approvals are disabled. Each call requires review.",
   "com_ui_tool_approval_storage_unavailable": "Remembered approval is unavailable. This approval will apply only to this call.",
-  "com_ui_tool_approval_background_unavailable": "Background launches cannot teach approval. Approve a successful foreground call to remember this tool."
+  "com_ui_tool_approval_background_unavailable": "Background launches cannot teach approval. Approve a successful foreground call to remember this tool.",
+  "com_eia_balance_unavailable": "Balance unavailable",
+  "com_eia_balance_aria": "Balance {{amount}}. Top up",
+  "com_eia_balance_tooltip": "Your balance. Click to top up",
+  "com_eia_balance_low_tooltip": "Low balance: top up to keep using AI",
+  "com_eia_topup_cta": "Top up",
+  "com_eia_topup_title": "Top up balance",
+  "com_eia_topup_description": "Pay with Yappy and your balance is credited instantly. You only pay for what you use.",
+  "com_eia_topup_custom_amount": "Other amount (USD)",
+  "com_eia_topup_range": "Between ${{min}} and ${{max}}.",
+  "com_eia_topup_pay": "Pay ${{amount}} with Yappy",
+  "com_eia_topup_waiting": "Waiting for payment confirmation…",
+  "com_eia_topup_waiting_hint": "Confirm the payment in your Yappy app. This window updates automatically.",
+  "com_eia_topup_open_simulator": "Open Yappy simulator (development)",
+  "com_eia_topup_paid": "Top-up of ${{amount}} credited.",
+  "com_eia_topup_failed": "The payment was not completed. Nothing was charged.",
+  "com_eia_topup_create_error": "Could not create the top-up"
 }

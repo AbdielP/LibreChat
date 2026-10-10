@@ -1213,5 +1213,21 @@
   "com_ui_zoom_in": "Acercar",
   "com_ui_zoom_level": "Nivel de zoom",
   "com_ui_zoom_out": "Alejar",
-  "com_user_message": "Usted"
+  "com_user_message": "Usted",
+  "com_eia_balance_unavailable": "Saldo no disponible",
+  "com_eia_balance_aria": "Saldo {{amount}}. Recargar",
+  "com_eia_balance_tooltip": "Tu saldo. Clic para recargar",
+  "com_eia_balance_low_tooltip": "Saldo bajo: recarga para seguir usando la IA",
+  "com_eia_topup_cta": "Recargar",
+  "com_eia_topup_title": "Recargar saldo",
+  "com_eia_topup_description": "Paga con Yappy y el saldo se acredita al instante. Solo pagas lo que usas.",
+  "com_eia_topup_custom_amount": "Otro monto (USD)",
+  "com_eia_topup_range": "Entre ${{min}} y ${{max}}.",
+  "com_eia_topup_pay": "Pagar ${{amount}} con Yappy",
+  "com_eia_topup_waiting": "Esperando la confirmación del pago…",
+  "com_eia_topup_waiting_hint": "Confirma el pago en tu app de Yappy. Esta ventana se actualiza sola.",
+  "com_eia_topup_open_simulator": "Abrir simulador de Yappy (desarrollo)",
+  "com_eia_topup_paid": "Recarga de ${{amount}} acreditada.",
+  "com_eia_topup_failed": "El pago no se completó. No se cobró nada.",
+  "com_eia_topup_create_error": "No se pudo crear la recarga"
 }
