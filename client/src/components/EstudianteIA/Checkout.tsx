@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CheckCircle2, ExternalLink, XCircle } from 'lucide-react';
 import {
   Button,
@@ -8,8 +8,10 @@ import {
   OGDialogTitle,
   Spinner,
 } from '@librechat/client';
-import type { TopUpOrder, TopUpStatus } from './api';
+import type { OrderStatus, PaymentSession, Plan } from './api';
+import type { YappyButtonHandle } from './YappyButton';
 import { useAuthContext, useLocalize } from '~/hooks';
+import YappyButton from './YappyButton';
 import { billingApi } from './api';
 import { cn } from '~/utils';
 
@@ -18,29 +20,32 @@ const MIN_USD = 1;
 const MAX_USD = 50;
 const POLL_INTERVAL_MS = 2_000;
 
+export type Purchase = { kind: 'topup' } | { kind: 'pass'; plan: Plan };
+
 type Step =
   | { kind: 'choose' }
-  | { kind: 'creating' }
-  | { kind: 'waiting'; order: TopUpOrder }
-  | { kind: 'done'; status: TopUpStatus; amount: string };
+  | { kind: 'waiting'; session: PaymentSession }
+  | { kind: 'done'; status: OrderStatus; amount: string };
 
-interface TopUpDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+interface CheckoutProps {
+  purchase: Purchase | null;
+  onClose: () => void;
   onPaid: () => void;
 }
 
 /**
- * Recarga de saldo con Yappy. Crea la orden en billing-api y espera la
- * confirmación (que llega a billing-api por el aviso firmado de Yappy).
- * En desarrollo el pago se hace en el simulador; con Yappy real, aquí se
- * montará el botón oficial (web component btn-yappy).
+ * estudiante-ia-app: pago con Yappy de una recarga de saldo extra o de un pase.
+ * El precio del pase lo fija billing-api (el cliente solo envía el código del plan).
+ * Tras crear la orden se espera la confirmación, que llega a billing-api por el
+ * aviso firmado de Yappy; aquí solo se consulta el estado de la orden.
  */
-export default function TopUpDialog({ open, onOpenChange, onPaid }: TopUpDialogProps) {
+export default function Checkout({ purchase, onClose, onPaid }: CheckoutProps) {
   const localize = useLocalize();
   const { token } = useAuthContext();
+  const yappyRef = useRef<YappyButtonHandle>(null);
   const [amount, setAmount] = useState('3');
   const [step, setStep] = useState<Step>({ kind: 'choose' });
+  const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const amountUsd = Number(amount);
@@ -49,27 +54,29 @@ export default function TopUpDialog({ open, onOpenChange, onPaid }: TopUpDialogP
     amountUsd >= MIN_USD &&
     amountUsd <= MAX_USD &&
     /^\d+(\.\d{1,2})?$/.test(amount);
+  const canPay = purchase?.kind === 'pass' || validAmount;
 
   useEffect(() => {
-    if (!open) {
+    if (purchase === null) {
       setStep({ kind: 'choose' });
       setError(null);
+      setCreating(false);
     }
-  }, [open]);
+  }, [purchase]);
 
-  // Mientras se espera el pago, se consulta el estado de la orden.
   useEffect(() => {
     if (step.kind !== 'waiting' || !token) {
       return;
     }
     const timer = setInterval(async () => {
       try {
-        const order = await billingApi.getTopUp(token, step.order.orderId);
-        if (order.status !== 'PENDING') {
-          setStep({ kind: 'done', status: order.status, amount: order.amount });
-          if (order.status === 'PAID') {
-            onPaid();
-          }
+        const order = await billingApi.getOrder(token, step.session.orderId);
+        if (order.status === 'PENDING') {
+          return;
+        }
+        setStep({ kind: 'done', status: order.status, amount: order.amount });
+        if (order.status === 'PAID') {
+          onPaid();
         }
       } catch {
         // Un fallo puntual de red no corta la espera; se reintenta en el próximo ciclo.
@@ -79,32 +86,60 @@ export default function TopUpDialog({ open, onOpenChange, onPaid }: TopUpDialogP
   }, [step, token, onPaid]);
 
   const startPayment = async () => {
-    if (!token || !validAmount) {
+    if (!token || !purchase || !canPay || creating) {
       return;
     }
     setError(null);
-    setStep({ kind: 'creating' });
+    setCreating(true);
     try {
-      const order = await billingApi.createTopUp(token, Math.round(amountUsd * 100));
-      setStep({ kind: 'waiting', order });
-      if (order.simulatorUrl) {
-        window.open(order.simulatorUrl, '_blank', 'noopener');
+      const session =
+        purchase.kind === 'pass'
+          ? await billingApi.buyPass(token, purchase.plan.code)
+          : await billingApi.createTopUp(token, Math.round(amountUsd * 100));
+      setStep({ kind: 'waiting', session });
+      if (session.simulatorUrl) {
+        window.open(session.simulatorUrl, '_blank', 'noopener');
+      } else {
+        yappyRef.current?.pay(session);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : localize('com_eia_topup_create_error'));
-      setStep({ kind: 'choose' });
+    } finally {
+      setCreating(false);
     }
   };
 
+  const title =
+    purchase?.kind === 'pass'
+      ? localize('com_eia_pass_buy_title')
+      : localize('com_eia_topup_title');
+
   return (
-    <OGDialog open={open} onOpenChange={onOpenChange}>
+    <OGDialog open={purchase !== null} onOpenChange={(open) => !open && onClose()}>
       <OGDialogContent className="w-11/12 max-w-md">
         <OGDialogHeader>
-          <OGDialogTitle>{localize('com_eia_topup_title')}</OGDialogTitle>
+          <OGDialogTitle>{title}</OGDialogTitle>
         </OGDialogHeader>
 
-        {(step.kind === 'choose' || step.kind === 'creating') && (
-          <div className="flex flex-col gap-4">
+        {step.kind === 'choose' && purchase?.kind === 'pass' && (
+          <div className="border-border-light flex flex-col gap-1 rounded-xl border p-4">
+            <p className="text-text-primary text-lg font-semibold">
+              {localize('com_eia_pass_name_price', {
+                name: purchase.plan.name,
+                price: purchase.plan.price,
+              })}
+            </p>
+            <p className="text-text-secondary text-sm">
+              {localize('com_eia_pass_terms', {
+                days: purchase.plan.durationDays,
+                allowance: purchase.plan.weeklyAllowance,
+              })}
+            </p>
+          </div>
+        )}
+
+        {step.kind === 'choose' && purchase?.kind === 'topup' && (
+          <div className="flex flex-col gap-3">
             <p className="text-text-secondary text-sm">{localize('com_eia_topup_description')}</p>
             <div className="grid grid-cols-4 gap-2">
               {PRESET_AMOUNTS.map((value) => (
@@ -135,18 +170,16 @@ export default function TopUpDialog({ open, onOpenChange, onPaid }: TopUpDialogP
                 {localize('com_eia_topup_range', { min: MIN_USD, max: MAX_USD })}
               </span>
             </label>
+          </div>
+        )}
+
+        {step.kind === 'choose' && (
+          <div className="flex flex-col gap-2 pt-2">
             {error && <p className="text-text-destructive text-sm">{error}</p>}
-            <Button
-              onClick={startPayment}
-              disabled={!validAmount || step.kind === 'creating'}
-              className="w-full"
-            >
-              {step.kind === 'creating' ? (
-                <Spinner className="size-4" />
-              ) : (
-                localize('com_eia_topup_pay', { amount: validAmount ? amountUsd.toFixed(2) : '--' })
-              )}
-            </Button>
+            <YappyButton ref={yappyRef} onClick={startPayment} disabled={!canPay || creating} />
+            <p className="text-text-secondary text-center text-xs">
+              {localize('com_eia_yappy_secure_note')}
+            </p>
           </div>
         )}
 
@@ -155,9 +188,9 @@ export default function TopUpDialog({ open, onOpenChange, onPaid }: TopUpDialogP
             <Spinner className="size-6" />
             <p className="text-text-primary text-sm">{localize('com_eia_topup_waiting')}</p>
             <p className="text-text-secondary text-xs">{localize('com_eia_topup_waiting_hint')}</p>
-            {step.order.simulatorUrl && (
+            {step.session.simulatorUrl && (
               <a
-                href={step.order.simulatorUrl}
+                href={step.session.simulatorUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-text-secondary flex items-center gap-1 text-xs underline"
@@ -175,7 +208,9 @@ export default function TopUpDialog({ open, onOpenChange, onPaid }: TopUpDialogP
               <>
                 <CheckCircle2 className="text-surface-submit size-8" aria-hidden="true" />
                 <p className="text-text-primary text-sm">
-                  {localize('com_eia_topup_paid', { amount: step.amount })}
+                  {purchase?.kind === 'pass'
+                    ? localize('com_eia_pass_activated')
+                    : localize('com_eia_topup_paid', { amount: step.amount })}
                 </p>
               </>
             ) : (
@@ -184,7 +219,7 @@ export default function TopUpDialog({ open, onOpenChange, onPaid }: TopUpDialogP
                 <p className="text-text-primary text-sm">{localize('com_eia_topup_failed')}</p>
               </>
             )}
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <Button variant="outline" onClick={onClose}>
               {localize('com_ui_close')}
             </Button>
           </div>

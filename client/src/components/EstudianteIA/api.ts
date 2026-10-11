@@ -5,15 +5,30 @@
 const BILLING_API_URL =
   (import.meta.env.VITE_BILLING_API_URL as string | undefined) ?? 'http://localhost:4000';
 
-export interface Wallet {
-  /** Saldo en USD con 2 decimales, truncado a centavos. */
-  balance: string;
-  available: string;
+export type OrderStatus = 'PENDING' | 'PAID' | 'REJECTED' | 'CANCELLED' | 'EXPIRED';
+
+export interface Usage {
+  pass: {
+    planName: string;
+    endsAt: string;
+    week: { number: number; resetsAt: string; percentUsed: number };
+  } | null;
+  /** Saldo extra en USD con 2 decimales, truncado a centavos. */
+  wallet: { balance: string; available: string };
+  /** Consumo por día, del más antiguo al más reciente. */
+  history: { day: string; spentMicros: string; messages: number }[];
 }
 
-export type TopUpStatus = 'PENDING' | 'PAID' | 'REJECTED' | 'CANCELLED' | 'EXPIRED';
+export interface Plan {
+  code: string;
+  name: string;
+  price: string;
+  durationDays: number;
+  weeklyAllowance: string;
+}
 
-export interface TopUpOrder {
+/** Datos que el botón de Yappy necesita para continuar el pago (evento eventPayment). */
+export interface PaymentSession {
   orderId: string;
   transactionId: string;
   token: string;
@@ -53,15 +68,28 @@ async function request<T>(path: string, token: string, init: RequestInit = {}): 
 }
 
 export const billingApi = {
-  getWallet: (token: string) => request<Wallet>('/me/balance', token),
+  getUsage: (token: string) => request<Usage>('/me/usage', token),
+  getPlans: (token: string) => request<Plan[]>('/me/plans', token),
   createTopUp: (token: string, amountCents: number) =>
-    request<TopUpOrder>('/me/topups', token, {
+    request<PaymentSession>('/me/topups', token, {
       method: 'POST',
       body: JSON.stringify({ amountCents }),
     }),
-  getTopUp: (token: string, orderId: string) =>
-    request<{ orderId: string; status: TopUpStatus; amount: string }>(
+  buyPass: (token: string, planCode: string) =>
+    request<PaymentSession>('/me/passes', token, {
+      method: 'POST',
+      body: JSON.stringify({ planCode }),
+    }),
+  /** Estado de cualquier orden propia (recarga o pase). */
+  getOrder: (token: string, orderId: string) =>
+    request<{ orderId: string; status: OrderStatus; amount: string }>(
       `/me/topups/${encodeURIComponent(orderId)}`,
       token,
     ),
 };
+
+/** micro-USD → "$0.0123" (4 decimales si es menos de un centavo, si no 2). */
+export function formatMicros(micros: string): string {
+  const usd = Number(micros) / 1_000_000;
+  return `$${usd.toFixed(usd > 0 && usd < 0.01 ? 4 : 2)}`;
+}

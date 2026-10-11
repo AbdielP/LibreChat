@@ -1,55 +1,72 @@
 import { memo, useState } from 'react';
-import { Wallet } from 'lucide-react';
+import { Ticket, Wallet } from 'lucide-react';
 import { TooltipAnchor } from '@librechat/client';
-import { useWallet } from './useWallet';
-import TopUpDialog from './TopUpDialog';
+import type { Purchase } from './Checkout';
+import AccountDialog from './AccountDialog';
+import { useAccount } from './useAccount';
 import { useLocalize } from '~/hooks';
+import Checkout from './Checkout';
 import { cn } from '~/utils';
 
 /**
- * estudiante-ia-app: saldo del estudiante en la barra superior.
- * Discreto a propósito (sin animaciones): solo cambia de color cuando el saldo
- * está bajo. Al hacer clic abre la recarga.
+ * estudiante-ia-app: estado de la cuenta en la barra superior. Con pase muestra
+ * cuánto queda de la semana; sin pase, el saldo extra. Discreto a propósito: solo
+ * cambia de color cuando conviene avisar. Al hacer clic abre "Tu cuenta".
  */
 function BalancePill() {
   const localize = useLocalize();
-  const [open, setOpen] = useState(false);
-  const { data, isLoading, isError, isLow, refresh } = useWallet();
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [purchase, setPurchase] = useState<Purchase | null>(null);
+  const { data, isLoading, isError, pass, isLow, passNearLimit, refresh } = useAccount();
 
-  let label = `$${data?.available ?? '0.00'}`;
+  let label = `$${data?.wallet.available ?? '0.00'}`;
+  if (pass) {
+    label = localize('com_eia_pill_pass_left', { percent: 100 - pass.week.percentUsed });
+  }
   if (isLoading) {
     label = '…';
   }
   if (isError) {
     label = localize('com_eia_balance_unavailable');
   }
-  const tooltip = isLow
-    ? localize('com_eia_balance_low_tooltip')
-    : localize('com_eia_balance_tooltip');
+  const warn = isLow || passNearLimit;
+  const Icon = pass ? Ticket : Wallet;
+
+  const openCheckout = (next: Purchase) => {
+    setAccountOpen(false);
+    setPurchase(next);
+  };
 
   return (
     <>
       <TooltipAnchor
-        description={tooltip}
+        description={
+          warn ? localize('com_eia_balance_low_tooltip') : localize('com_eia_account_tooltip')
+        }
         render={
           <button
             type="button"
-            onClick={() => setOpen(true)}
+            onClick={() => setAccountOpen(true)}
             aria-label={localize('com_eia_balance_aria', { amount: label })}
             className={cn(
               'flex h-9 items-center gap-1.5 rounded-xl border px-3 text-sm font-medium transition-colors',
-              isLow
+              warn
                 ? 'border-border-medium text-text-warning hover:bg-surface-hover'
                 : 'border-border-light text-text-primary hover:bg-surface-hover bg-transparent',
             )}
           >
-            <Wallet className="size-4" aria-hidden="true" />
+            <Icon className="size-4" aria-hidden="true" />
             <span className="tabular-nums">{label}</span>
-            {isLow && <span className="hidden sm:inline">· {localize('com_eia_topup_cta')}</span>}
           </button>
         }
       />
-      <TopUpDialog open={open} onOpenChange={setOpen} onPaid={refresh} />
+      <AccountDialog
+        open={accountOpen}
+        onOpenChange={setAccountOpen}
+        usage={data}
+        onBuy={openCheckout}
+      />
+      <Checkout purchase={purchase} onClose={() => setPurchase(null)} onPaid={refresh} />
     </>
   );
 }
