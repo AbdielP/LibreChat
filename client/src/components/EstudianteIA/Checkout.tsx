@@ -11,8 +11,9 @@ import {
 import type { OrderStatus, PaymentSession, Plan } from './api';
 import type { YappyButtonHandle } from './YappyButton';
 import { useAuthContext, useLocalize } from '~/hooks';
+import { billingApi, estimateMessages } from './api';
 import YappyButton from './YappyButton';
-import { billingApi } from './api';
+import { useModels } from './useModels';
 import { cn } from '~/utils';
 
 const PRESET_AMOUNTS = [2, 3, 5, 10];
@@ -55,6 +56,7 @@ export default function Checkout({ purchase, onClose, onPaid }: CheckoutProps) {
     amountUsd <= MAX_USD &&
     /^\d+(\.\d{1,2})?$/.test(amount);
   const canPay = purchase?.kind === 'pass' || validAmount;
+  const { economy, standard } = useModels();
 
   useEffect(() => {
     if (purchase === null) {
@@ -170,6 +172,16 @@ export default function Checkout({ purchase, onClose, onPaid }: CheckoutProps) {
                 {localize('com_eia_topup_range', { min: MIN_USD, max: MAX_USD })}
               </span>
             </label>
+            {validAmount && economy && standard && (
+              <p className="bg-surface-secondary text-text-primary rounded-lg px-3 py-2 text-sm">
+                {localize('com_eia_topup_estimate', {
+                  economy: estimateMessages(amountUsd * 1_000_000, economy).toLocaleString(),
+                  economyName: economy.displayName,
+                  standard: estimateMessages(amountUsd * 1_000_000, standard).toLocaleString(),
+                  standardName: standard.displayName,
+                })}
+              </p>
+            )}
           </div>
         )}
 

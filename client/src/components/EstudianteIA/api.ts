@@ -14,9 +14,23 @@ export interface Usage {
     week: { number: number; resetsAt: string; percentUsed: number };
   } | null;
   /** Saldo extra en USD con 2 decimales, truncado a centavos. */
-  wallet: { balance: string; available: string };
+  wallet: { balance: string; available: string; availableMicros: string };
   /** Consumo por día, del más antiguo al más reciente. */
   history: { day: string; spentMicros: string; messages: number }[];
+}
+
+/** Modelo con el costo de un mensaje típico, para estimar cuánto rinde el saldo. */
+export interface ModelEstimate {
+  modelKey: string;
+  displayName: string;
+  tier: 'ECONOMY' | 'STANDARD' | 'ADVANCED';
+  typicalMessageMicros: string;
+}
+
+/** Cuántos mensajes típicos alcanza a pagar un monto (en micro-USD). */
+export function estimateMessages(availableMicros: string | number, model: ModelEstimate): number {
+  const typical = Number(model.typicalMessageMicros);
+  return typical > 0 ? Math.floor(Number(availableMicros) / typical) : 0;
 }
 
 export interface Plan {
@@ -70,6 +84,7 @@ async function request<T>(path: string, token: string, init: RequestInit = {}): 
 export const billingApi = {
   getUsage: (token: string) => request<Usage>('/me/usage', token),
   getPlans: (token: string) => request<Plan[]>('/me/plans', token),
+  getModels: (token: string) => request<ModelEstimate[]>('/me/models', token),
   createTopUp: (token: string, amountCents: number) =>
     request<PaymentSession>('/me/topups', token, {
       method: 'POST',

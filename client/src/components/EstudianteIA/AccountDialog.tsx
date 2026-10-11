@@ -9,9 +9,10 @@ import {
 } from '@librechat/client';
 import type { Purchase } from './Checkout';
 import type { Plan, Usage } from './api';
+import { billingApi, estimateMessages, formatMicros } from './api';
 import { useAuthContext, useLocalize } from '~/hooks';
 import { PASS_WARNING_PERCENT } from './useAccount';
-import { billingApi, formatMicros } from './api';
+import { useModels } from './useModels';
 import { cn } from '~/utils';
 
 const HISTORY_ROWS = 7;
@@ -64,10 +65,39 @@ export default function AccountDialog({ open, onOpenChange, usage, onBuy }: Acco
             </Button>
           </section>
 
+          <Estimate availableMicros={usage?.wallet.availableMicros ?? '0'} />
+
           <History history={usage?.history ?? []} />
         </div>
       </OGDialogContent>
     </OGDialog>
+  );
+}
+
+/** Traduce el saldo a mensajes por modelo: "dura según lo que pagas", en algo concreto. */
+function Estimate({ availableMicros }: { availableMicros: string }) {
+  const localize = useLocalize();
+  const { models } = useModels();
+  if (models.length === 0) {
+    return null;
+  }
+  return (
+    <section className="flex flex-col gap-2">
+      <p className="text-text-primary text-sm font-medium">{localize('com_eia_estimate_title')}</p>
+      <ul className="border-border-light divide-border-light divide-y rounded-xl border">
+        {models.map((model) => (
+          <li key={model.modelKey} className="flex justify-between px-4 py-2 text-sm">
+            <span className="text-text-primary">{model.displayName}</span>
+            <span className="text-text-secondary tabular-nums">
+              {localize('com_eia_estimate_row', {
+                total: estimateMessages(availableMicros, model).toLocaleString(),
+              })}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className="text-text-secondary text-xs">{localize('com_eia_estimate_note')}</p>
+    </section>
   );
 }
 
@@ -84,6 +114,10 @@ function PassCard({
   const pass = usage?.pass;
 
   if (!pass) {
+    // Sin pase vigente y sin pases a la venta (producto prepago puro): no se muestra nada.
+    if (!offer) {
+      return null;
+    }
     return (
       <section className="border-border-medium flex flex-col gap-3 rounded-xl border p-4">
         <div className="flex items-center gap-2">

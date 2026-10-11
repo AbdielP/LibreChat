@@ -3410,7 +3410,7 @@
   "com_eia_balance_aria": "Balance {{amount}}. Top up",
   "com_eia_balance_low_tooltip": "Low balance: top up to keep using AI",
   "com_eia_topup_cta": "Top up",
-  "com_eia_topup_title": "Top up extra balance",
+  "com_eia_topup_title": "Top up balance",
   "com_eia_topup_description": "Pay with Yappy and your balance is credited instantly. You only pay for what you use.",
   "com_eia_topup_custom_amount": "Other amount (USD)",
   "com_eia_topup_range": "Between ${{min}} and ${{max}}.",
@@ -3428,7 +3428,7 @@
   "com_eia_pass_activated": "Pass activated!",
   "com_eia_account_title": "Your account",
   "com_eia_account_tooltip": "Your account and usage",
-  "com_eia_wallet_label": "Extra balance",
+  "com_eia_wallet_label": "Balance",
   "com_eia_pass_none_title": "Monthly pass",
   "com_eia_pass_buy_cta": "Buy for ${{price}}",
   "com_eia_pass_until": "Valid until {{date}}",
@@ -3440,5 +3440,9 @@
   "com_eia_history_title": "Last days",
   "com_eia_history_empty": "No usage yet.",
   "com_eia_history_row": "{{messages}} messages · {{amount}}",
-  "com_eia_pill_pass_left": "{{percent}}% left"
+  "com_eia_pill_pass_left": "{{percent}}% left",
+  "com_eia_estimate_title": "Your balance covers about",
+  "com_eia_estimate_row": "{{total}} messages",
+  "com_eia_estimate_note": "Estimate for a typical message. Long conversations use more.",
+  "com_eia_topup_estimate": "≈ {{economy}} messages with {{economyName}} or {{standard}} with {{standardName}}"
 }

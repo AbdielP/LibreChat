@@ -1218,7 +1218,7 @@
   "com_eia_balance_aria": "Saldo {{amount}}. Recargar",
   "com_eia_balance_low_tooltip": "Saldo bajo: recarga para seguir usando la IA",
   "com_eia_topup_cta": "Recargar",
-  "com_eia_topup_title": "Recargar saldo extra",
+  "com_eia_topup_title": "Recargar saldo",
   "com_eia_topup_description": "Paga con Yappy y el saldo se acredita al instante. Solo pagas lo que usas.",
   "com_eia_topup_custom_amount": "Otro monto (USD)",
   "com_eia_topup_range": "Entre ${{min}} y ${{max}}.",
@@ -1236,7 +1236,7 @@
   "com_eia_pass_activated": "¡Pase activado!",
   "com_eia_account_title": "Tu cuenta",
   "com_eia_account_tooltip": "Tu cuenta y uso",
-  "com_eia_wallet_label": "Saldo extra",
+  "com_eia_wallet_label": "Saldo",
   "com_eia_pass_none_title": "Pase mensual",
   "com_eia_pass_buy_cta": "Comprar por ${{price}}",
   "com_eia_pass_until": "Vigente hasta el {{date}}",
@@ -1248,5 +1248,9 @@
   "com_eia_history_title": "Últimos días",
   "com_eia_history_empty": "Aún no hay consumo.",
   "com_eia_history_row": "{{messages}} mensajes · {{amount}}",
-  "com_eia_pill_pass_left": "{{percent}}% disponible"
+  "com_eia_pill_pass_left": "{{percent}}% disponible",
+  "com_eia_estimate_title": "Tu saldo alcanza para aprox.",
+  "com_eia_estimate_row": "{{total}} mensajes",
+  "com_eia_estimate_note": "Estimación para un mensaje típico. Las conversaciones largas consumen más.",
+  "com_eia_topup_estimate": "≈ {{economy}} mensajes con {{economyName}} o {{standard}} con {{standardName}}"
 }
