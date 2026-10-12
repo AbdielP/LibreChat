@@ -8,6 +8,7 @@ import {
   ChevronRight,
   CircleHelp,
   Files,
+  Gauge,
   Keyboard,
   LifeBuoy,
   LogOut,
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 import { ArchivedChatsModal } from '~/components/Nav/SettingsTabs/General/ArchivedChatsModal';
 import { filesDialogTriggerAtom, showFilesDialogAtom } from '~/store/filesDialog';
+import { settingsInitialTabAtom, USAGE_TAB } from '~/components/EstudianteIA';
 import { useGetStartupConfig } from '~/data-provider';
 import { useAuthContext } from '~/hooks/AuthContext';
 import { settingsOpenAtom } from './Settings';
@@ -99,6 +101,7 @@ function AccountSettings({ collapsed = false }: { collapsed?: boolean }) {
   const { user, logout } = useAuthContext();
   const { data: startupConfig } = useGetStartupConfig();
   const setShowSettings = useSetAtom(settingsOpenAtom);
+  const setSettingsInitialTab = useSetAtom(settingsInitialTabAtom);
   const setShowFiles = useSetAtom(showFilesDialogAtom);
   const setFilesDialogTrigger = useSetAtom(filesDialogTriggerAtom);
   const setShowShortcutsDialog = useSetRecoilState(store.showShortcutsDialog);
@@ -168,8 +171,23 @@ function AccountSettings({ collapsed = false }: { collapsed?: boolean }) {
           <Files className="icon-md" aria-hidden="true" />
           {localize('com_nav_my_files')}
         </Menu.MenuItem>
+        {/* estudiante-ia-app: atajo a Configuración → Uso */}
         <Menu.MenuItem
-          onClick={() => setShowSettings(true)}
+          onClick={() => {
+            setSettingsInitialTab(USAGE_TAB);
+            setShowSettings(true);
+          }}
+          className="select-item text-sm"
+          data-testid="nav-usage"
+        >
+          <Gauge className="icon-md" aria-hidden="true" />
+          {localize('com_eia_usage_tab')}
+        </Menu.MenuItem>
+        <Menu.MenuItem
+          onClick={() => {
+            setSettingsInitialTab(null);
+            setShowSettings(true);
+          }}
           className="select-item text-sm"
           data-testid="nav-settings"
         >

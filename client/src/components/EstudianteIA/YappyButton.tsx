@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import { Spinner } from '@librechat/client';
 import type { PaymentSession } from './api';
 import { useLocalize } from '~/hooks';
+import { cn } from '~/utils';
 
 /** Botón oficial de Yappy (web component). Pruebas por defecto; producción vía env. */
 const YAPPY_CDN_URL =
@@ -17,8 +18,27 @@ type YappyElement = HTMLElement & {
 
 let scriptPromise: Promise<void> | null = null;
 
+/**
+ * El botón oficial trae `padding: 0` y su texto queda pegado al borde. Como es un
+ * componente de terceros (sin clases que podamos pasarle), se le da aire con una
+ * regla acotada a nuestro contenedor `[data-eia-yappy]`, sin tocar sus colores ni su marca.
+ */
+const YAPPY_STYLE_ID = 'eia-yappy-style';
+const YAPPY_STYLE = `[data-eia-yappy] .yappy-button { padding: 0 1.5rem; gap: 0.5rem; min-height: 3rem; }`;
+
+function ensureYappyStyle() {
+  if (document.getElementById(YAPPY_STYLE_ID)) {
+    return;
+  }
+  const style = document.createElement('style');
+  style.id = YAPPY_STYLE_ID;
+  style.textContent = YAPPY_STYLE;
+  document.head.appendChild(style);
+}
+
 /** Carga el script del botón una sola vez por página. */
 function loadYappyScript(): Promise<void> {
+  ensureYappyStyle();
   if (customElements.get('btn-yappy')) {
     return Promise.resolve();
   }
@@ -101,8 +121,9 @@ const YappyButton = forwardRef<YappyButtonHandle, YappyButtonProps>(function Yap
       )}
       <div
         ref={containerRef}
+        data-eia-yappy=""
         aria-disabled={disabled}
-        className={disabled ? 'pointer-events-none opacity-50' : undefined}
+        className={cn('w-full', disabled && 'pointer-events-none opacity-50')}
       />
     </div>
   );
