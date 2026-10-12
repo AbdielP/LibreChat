@@ -17,6 +17,11 @@ export interface Usage {
   wallet: { balance: string; available: string; availableMicros: string };
   /** Consumo por día, del más antiguo al más reciente. */
   history: { day: string; spentMicros: string; messages: number }[];
+  /** Gasto por modelo en los últimos 30 días, de mayor a menor. */
+  byModel: { model: string; spentMicros: string; messages: number }[];
+  /** Últimas recargas acreditadas. */
+  topups: { at: string; amount: string }[];
+  updatedAt: string;
 }
 
 /** Modelo con el costo de un mensaje típico, para estimar cuánto rinde el saldo. */

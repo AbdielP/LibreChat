@@ -38,6 +38,7 @@ import FontSizeSelector from '../SettingsTabs/Chat/FontSizeSelector';
 import ChatTitleInTab from '../SettingsTabs/General/ChatTitleInTab';
 import AdvancedPrompts from '../SettingsTabs/Chat/AdvancedPrompts';
 import DuringRunAction from '../SettingsTabs/Chat/DuringRunAction';
+import { UsagePanel, USAGE_TAB } from '~/components/EstudianteIA';
 import DeleteAccount from '../SettingsTabs/Account/DeleteAccount';
 import StatefulWorkspaceDefault from './StatefulWorkspaceDefault';
 import { ForkSettings } from '../SettingsTabs/Chat/ForkSettings';
@@ -839,5 +840,15 @@ export const registry: SettingEntry[] = [
     keywords: ['version', 'build', 'diagnostics'],
     show: (ctx) => ctx.aboutEnabled,
     Component: About,
+  },
+
+  // estudiante-ia-app: Uso
+  {
+    id: 'usageOverview',
+    tab: USAGE_TAB,
+    section: USAGE_TAB,
+    labelKey: 'com_eia_usage_tab',
+    keywords: ['uso', 'usage', 'saldo', 'balance', 'consumo', 'recargar', 'yappy'],
+    Component: UsagePanel,
   },
 ];

@@ -1,9 +1,10 @@
 import { createElement } from 'react';
-import { MessageSquare, Info } from 'lucide-react';
+import { MessageSquare, Info, Gauge } from 'lucide-react';
 import { SettingsTabValues } from 'librechat-data-provider';
 import { GearIcon, DataIcon, UserIcon, SpeechIcon } from '@librechat/client';
 import type { ComponentType, ReactNode } from 'react';
 import type { TranslationKeys } from '~/hooks';
+import { USAGE_TAB } from '~/components/EstudianteIA/constants';
 
 export type SettingsTab =
   | SettingsTabValues.GENERAL
@@ -12,7 +13,8 @@ export type SettingsTab =
   | SettingsTabValues.LANGFUSE
   | SettingsTabValues.DATA
   | SettingsTabValues.ACCOUNT
-  | SettingsTabValues.ABOUT;
+  | SettingsTabValues.ABOUT
+  | typeof USAGE_TAB;
 
 export type SectionId =
   | 'appearance'
@@ -36,7 +38,8 @@ export type SectionId =
   | 'profile'
   | 'security'
   | 'billing'
-  | 'about';
+  | 'about'
+  | typeof USAGE_TAB;
 
 export interface SettingsContextValue {
   balanceEnabled: boolean;
@@ -157,6 +160,13 @@ export const TABS: TabMeta[] = [
       { id: 'apiKeys', labelKey: 'com_ui_settings_section_api_keys' },
       { id: 'danger', labelKey: 'com_ui_settings_section_danger_zone', danger: true },
     ],
+  },
+  // estudiante-ia-app: pestaña "Uso" (saldo, consumo y recargas).
+  {
+    id: USAGE_TAB,
+    labelKey: 'com_eia_usage_tab',
+    icon: createElement(Gauge, { className: 'icon-sm', 'aria-hidden': true }),
+    sections: [{ id: USAGE_TAB, labelKey: 'com_eia_usage_tab' }],
   },
   {
     id: SettingsTabValues.ACCOUNT,
