@@ -64,6 +64,11 @@ export default defineConfig(({ command }) => ({
         target: backendURL,
         changeOrigin: true,
       },
+      // User-uploaded images (chat thumbnails).
+      '/images': {
+        target: backendURL,
+        changeOrigin: true,
+      },
     },
   },
   // Set the directory where environment variables are loaded from and restrict prefixes
