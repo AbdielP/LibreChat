@@ -19,6 +19,7 @@ import {
   PermissionTypes,
   hasPermissions,
   SkillsScope,
+  AgentCapabilities,
   isEphemeralAgentId,
   defaultAgentCapabilities,
   resolveAgentSkillsScope,
@@ -142,6 +143,15 @@ function useAllSkills(enabled: boolean, openRevision: number): TSkillSummary[] {
   }, [data?.pages]);
 }
 
+/**
+ * estudiante-ia-app: without an agents endpoint, LibreChat falls back to every default
+ * capability. Artifacts are left out because billing-api adds their instructions
+ * automatically when the student asks for something visual, so the manual toggle is redundant.
+ */
+const chatCapabilities = defaultAgentCapabilities.filter(
+  (capability) => capability !== AgentCapabilities.artifacts,
+);
+
 export default function usePaletteEntries({
   conversationId,
   agentId,
@@ -185,7 +195,7 @@ export default function usePaletteEntries({
     artifactsEnabled,
     fileSearchEnabled,
     skillsEnabled,
-  } = useAgentCapabilities(context?.agentsConfig?.capabilities ?? defaultAgentCapabilities);
+  } = useAgentCapabilities(context?.agentsConfig?.capabilities ?? chatCapabilities);
 
   const canUseWebSearch = useHasAccess({
     permissionType: PermissionTypes.WEB_SEARCH,
