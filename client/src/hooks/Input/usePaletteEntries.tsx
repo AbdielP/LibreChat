@@ -145,11 +145,16 @@ function useAllSkills(enabled: boolean, openRevision: number): TSkillSummary[] {
 
 /**
  * estudiante-ia-app: without an agents endpoint, LibreChat falls back to every default
- * capability. Artifacts are left out because billing-api adds their instructions
- * automatically when the student asks for something visual, so the manual toggle is redundant.
+ * capability. Manual toggles that are automatic here are left out: artifacts (billing-api adds
+ * their instructions when the user asks for something visual) and memory (saved by the
+ * configured memory agent after every message).
  */
+const AUTOMATIC_CAPABILITIES: readonly AgentCapabilities[] = [
+  AgentCapabilities.artifacts,
+  AgentCapabilities.memory,
+];
 const chatCapabilities = defaultAgentCapabilities.filter(
-  (capability) => capability !== AgentCapabilities.artifacts,
+  (capability) => !AUTOMATIC_CAPABILITIES.includes(capability),
 );
 
 export default function usePaletteEntries({
