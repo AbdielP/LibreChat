@@ -20,12 +20,10 @@ const readStoredLang = () => {
   }
 };
 
-const defaultLang = () => {
-  const userLang =
-    (typeof navigator !== 'undefined' ? navigator.language || navigator.languages?.[0] : null) ??
-    'en';
-  return Cookies.get('lang') || readStoredLang() || userLang;
-};
+/** estudiante-ia-app: students in Panama start in Spanish, whatever the browser language. */
+const DEFAULT_LANG = 'es-ES';
+
+const defaultLang = () => Cookies.get('lang') || readStoredLang() || DEFAULT_LANG;
 
 const lang = atomWithLocalStorage('lang', defaultLang());
 const languageLoading = atom<boolean>({
