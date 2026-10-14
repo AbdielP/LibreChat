@@ -17,7 +17,8 @@ function BalancePill() {
   const [purchase, setPurchase] = useState<Purchase | null>(null);
   const { data, isLoading, isError, isLow, refresh } = useAccount();
 
-  let label = `$${data?.wallet.available ?? '0.00'}`;
+  // Saldo real: una reserva de un mensaje en curso no lo hace "bajar" (el detalle está en Uso).
+  let label = `$${data?.wallet.balance ?? '0.00'}`;
   if (isLoading) {
     label = '…';
   }

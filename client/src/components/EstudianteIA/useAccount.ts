@@ -46,9 +46,9 @@ export function useAccount() {
   }, [isSubmitting, queryClient]);
 
   const pass = query.data?.pass ?? null;
-  const available = query.data ? Number(query.data.wallet.available) : null;
+  const balance = query.data ? Number(query.data.wallet.balance) : null;
   const passNearLimit = pass !== null && pass.week.percentUsed >= PASS_WARNING_PERCENT;
-  const walletLow = available !== null && available < LOW_BALANCE_USD;
+  const walletLow = balance !== null && balance < LOW_BALANCE_USD;
 
   return {
     ...query,

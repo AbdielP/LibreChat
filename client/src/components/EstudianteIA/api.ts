@@ -13,8 +13,17 @@ export interface Usage {
     endsAt: string;
     week: { number: number; resetsAt: string; percentUsed: number };
   } | null;
-  /** Saldo extra en USD con 2 decimales, truncado a centavos. */
-  wallet: { balance: string; available: string; availableMicros: string };
+  /**
+   * Saldo en USD con 2 decimales. balance = saldo real (truncado a centavos);
+   * held = reservado por mensajes en curso (redondeado hacia arriba); available = balance - held.
+   */
+  wallet: {
+    balance: string;
+    held: string;
+    available: string;
+    heldMicros: string;
+    availableMicros: string;
+  };
   /** Consumo por día, del más antiguo al más reciente. */
   history: { day: string; spentMicros: string; messages: number }[];
   /** Gasto por modelo en los últimos 30 días, de mayor a menor. */

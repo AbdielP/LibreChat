@@ -1242,6 +1242,7 @@
   "com_eia_usage_tab": "Uso",
   "com_eia_usage_status": "Tu saldo alcanza para unos {{economy}} mensajes con {{economyName}} o {{standard}} con {{standardName}}.",
   "com_eia_usage_status_empty": "No tienes saldo. Recarga para seguir usando la IA.",
+  "com_eia_usage_held": "${{amount}} reservados por un mensaje en curso (se liberan al terminar).",
   "com_eia_usage_wallet_hint": "Prepagado con Yappy. Solo pagas lo que usas.",
   "com_eia_usage_by_model": "Últimos 30 días por modelo",
   "com_eia_usage_percent": "{{percent}}%",

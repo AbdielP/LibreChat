@@ -58,10 +58,15 @@ export default function UsagePanel() {
         <div>
           <p className="text-text-primary font-medium">{localize('com_eia_wallet_label')}</p>
           <p className="text-text-secondary text-sm">{localize('com_eia_usage_wallet_hint')}</p>
+          {Number(data.wallet.heldMicros) > 0 && (
+            <p className="text-text-secondary text-sm">
+              {localize('com_eia_usage_held', { amount: data.wallet.held })}
+            </p>
+          )}
         </div>
         <div className="flex items-center gap-4">
           <span className="text-text-primary text-lg font-semibold tabular-nums">
-            ${data.wallet.available}
+            ${data.wallet.balance}
           </span>
           <Button onClick={() => setPurchase({ kind: 'topup' })}>
             {localize('com_eia_topup_cta')}

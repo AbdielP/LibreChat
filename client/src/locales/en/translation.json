@@ -3434,6 +3434,7 @@
   "com_eia_usage_tab": "Usage",
   "com_eia_usage_status": "Your balance covers about {{economy}} messages with {{economyName}} or {{standard}} with {{standardName}}.",
   "com_eia_usage_status_empty": "You have no balance. Top up to keep using the AI.",
+  "com_eia_usage_held": "${{amount}} reserved for a message in progress (released when it finishes).",
   "com_eia_usage_wallet_hint": "Prepaid with Yappy. You only pay for what you use.",
   "com_eia_usage_by_model": "Last 30 days by model",
   "com_eia_usage_percent": "{{percent}}%",
