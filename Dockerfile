@@ -57,6 +57,8 @@ RUN \
 COPY --chown=node:node . .
 
 ARG VITE_MCP_SANDBOX_URL=
+# Dirección pública de billing-api (saldo, recargas). Sin valor, la UI usa http://localhost:4000.
+ARG VITE_BILLING_API_URL
 RUN \
     # React client build with configurable memory
     NODE_OPTIONS="--max-old-space-size=${NODE_MAX_OLD_SPACE_SIZE}" npm run frontend && \
