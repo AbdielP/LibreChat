@@ -156,8 +156,8 @@ export default defineConfig(({ command }) => ({
       },
       includeAssets: [],
       manifest: {
-        name: 'LibreChat',
-        short_name: 'LibreChat',
+        name: 'NovexIA',
+        short_name: 'NovexIA',
         display: 'standalone',
         background_color: '#000000',
         theme_color: '#009688',
@@ -513,6 +513,10 @@ export function copyPublicAssets(): Plugin {
         path.join(publicDir, 'robots.txt'),
         path.join(outDir, 'robots.txt'),
       );
+      // NovexIA: páginas legales (términos, privacidad, contacto).
+      await fs.promises.cp(path.join(publicDir, 'legal'), path.join(outDir, 'legal'), {
+        recursive: true,
+      });
       const licences = (await fs.promises.readdir(fontsDir)).filter((name) =>
         name.endsWith('.txt'),
       );
