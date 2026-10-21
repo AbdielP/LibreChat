@@ -2571,3 +2571,9 @@ html[data-input-modality='keyboard']
 ::view-transition-group(chat-form) {
   z-index: 2;
 }
+
+/* NovexIA: los íconos de los modelos van en el color del texto, como el resto de la UI.
+   Se muestran como <img> (no heredan color), así que en modo oscuro se invierten. */
+.dark img[src*='/assets/estudiante-ia/'] {
+  filter: invert(1);
+}
