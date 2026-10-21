@@ -14,7 +14,6 @@ import {
 } from '~/data-provider';
 import { cn, logger, setDocumentTitle, isConversationUnseen, hasRealTitle } from '~/utils';
 import { useNavigateToConvo, useLocalize, useShiftKey } from '~/hooks';
-import ConversationEndpointIcon from './ConversationEndpointIcon';
 import useDrawerViewport from '~/hooks/Nav/useDrawerViewport';
 import { focusableInRow, resolveRowBeside } from './focus';
 import { areConversationRenderPropsEqual } from './utils';
@@ -389,32 +388,19 @@ function Conversation({
           keyShortcuts={keyShortcuts}
           describedBy={projectBadgeProjectId ? projectLabelId : undefined}
         >
-          {/* Status sits on the avatar so the row's trailing edge stays free for its badges
-              and menu. The ring is 2.125rem around the 1.25rem icon: offset by half the
-              difference. Both are rem so the ring follows the icon box at any UI scale. */}
-          <span className="relative flex size-5 shrink-0 items-center justify-center">
-            <ConversationEndpointIcon conversation={conversation} size={20} context="menu-item" />
-            {isGenerating && (
-              <Spinner
-                size={34}
-                strokeWidth={1.9}
-                bgOpacity={0.14}
-                className="pointer-events-none absolute -top-[0.4375rem] -left-[0.4375rem] size-[2.125rem]"
-              />
-            )}
-            {isUnseen && !isGenerating && (
-              /* `ConvoLink`'s aria-label carries the text equivalent of the ring and the dot. */
-              <span
-                aria-hidden="true"
-                className={cn(
-                  'bg-status-info pointer-events-none absolute -right-0.5 -bottom-0.5 size-2 rounded-full ring-2',
-                  isActiveConvo || isPopoverActive
-                    ? 'ring-surface-nav-selected'
-                    : 'ring-surface-primary-alt group-hover:ring-surface-nav-hover',
-                )}
-              />
-            )}
-          </span>
+          {/* NovexIA: sin ícono del modelo en cada chat (como ChatGPT); solo quedan los
+              indicadores de "generando" y "sin leer". */}
+          {(isGenerating || isUnseen) && (
+            <span className="relative flex size-5 shrink-0 items-center justify-center">
+              {isGenerating && (
+                <Spinner size={16} strokeWidth={2} bgOpacity={0.14} className="size-4" />
+              )}
+              {isUnseen && !isGenerating && (
+                /* `ConvoLink`'s aria-label carries the text equivalent of the spinner and the dot. */
+                <span aria-hidden="true" className="bg-status-info size-2 rounded-full" />
+              )}
+            </span>
+          )}
         </ConvoLink>
       )}
       {isSharedBadgeVisible && (

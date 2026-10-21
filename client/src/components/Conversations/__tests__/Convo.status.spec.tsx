@@ -111,18 +111,17 @@ describe('Conversation row status', () => {
     expect(rowButton()).toContainElement(ring);
   });
 
-  it('sizes the ring in rem so it follows the avatar box at any UI scale', () => {
-    renderRow({ isGenerating: true });
+  it('shows no model icon on the row (NovexIA)', () => {
+    renderRow();
 
-    expect(screen.getByTestId('status-ring').getAttribute('class')).toContain('size-[2.125rem]');
+    expect(screen.queryByTestId('convo-icon')).not.toBeInTheDocument();
   });
 
-  it('offsets the ring in rem so it stays centered on the avatar at any UI scale', () => {
+  it('sizes the spinner in rem as an icon-sized slot', () => {
     renderRow({ isGenerating: true });
 
     const className = screen.getByTestId('status-ring').getAttribute('class') ?? '';
-    expect(className).toContain('-top-[0.4375rem]');
-    expect(className).toContain('-left-[0.4375rem]');
+    expect(className).toContain('size-4');
     expect(className).not.toMatch(/\[\d+px\]/);
   });
 
