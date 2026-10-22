@@ -158,9 +158,11 @@ export default defineConfig(({ command }) => ({
       manifest: {
         name: 'NovexIA',
         short_name: 'NovexIA',
+        description: 'Tu asistente de IA en español. Pagas solo lo que usas.',
+        lang: 'es',
         display: 'standalone',
         background_color: '#000000',
-        theme_color: '#009688',
+        theme_color: '#0f766e',
         icons: [
           {
             src: 'assets/favicon-32x32.png',
@@ -180,6 +182,11 @@ export default defineConfig(({ command }) => ({
           {
             src: 'assets/icon-192x192.png',
             sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: 'assets/icon-512x512.png',
+            sizes: '512x512',
             type: 'image/png',
           },
           {
