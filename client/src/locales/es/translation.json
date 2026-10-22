@@ -3439,6 +3439,7 @@
   "com_ui_tool_approval_background_unavailable": "Las ejecuciones en segundo plano no guardan aprobaciones. Aprueba una llamada exitosa en primer plano para recordar esta herramienta.",
   "com_eia_balance_unavailable": "Saldo no disponible",
   "com_eia_balance_aria": "Saldo {{amount}}. Recargar",
+  "com_eia_balance_readonly_aria": "Saldo {{amount}}",
   "com_eia_balance_low_tooltip": "Saldo bajo: recarga para seguir usando la IA",
   "com_eia_topup_cta": "Recargar",
   "com_eia_topup_title": "Recargar saldo",
@@ -3474,5 +3475,6 @@
   "com_eia_usage_topup_amount": "+${{amount}}",
   "com_eia_usage_updated": "Última actualización: {{date}}",
   "com_eia_usage_refresh": "Actualizar",
+  "com_eia_balance_readonly_tooltip": "Tu saldo disponible",
   "com_eia_balance_tooltip": "Tu saldo. Clic para recargar"
 }

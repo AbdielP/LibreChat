@@ -68,9 +68,11 @@ export default function UsagePanel() {
           <span className="text-text-primary text-lg font-semibold tabular-nums">
             ${data.wallet.balance}
           </span>
-          <Button onClick={() => setPurchase({ kind: 'topup' })}>
-            {localize('com_eia_topup_cta')}
-          </Button>
+          {data.topupsEnabled && (
+            <Button onClick={() => setPurchase({ kind: 'topup' })}>
+              {localize('com_eia_topup_cta')}
+            </Button>
+          )}
         </div>
       </section>
 

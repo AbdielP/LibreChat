@@ -8,6 +8,8 @@ const BILLING_API_URL =
 export type OrderStatus = 'PENDING' | 'PAID' | 'REJECTED' | 'CANCELLED' | 'EXPIRED';
 
 export interface Usage {
+  /** false sin forma de pago configurada: no se muestra "Recargar" (el saldo lo carga el admin). */
+  topupsEnabled: boolean;
   pass: {
     planName: string;
     endsAt: string;

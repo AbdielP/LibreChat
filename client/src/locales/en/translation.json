@@ -3408,6 +3408,7 @@
   "com_ui_tool_approval_background_unavailable": "Background launches cannot teach approval. Approve a successful foreground call to remember this tool.",
   "com_eia_balance_unavailable": "Balance unavailable",
   "com_eia_balance_aria": "Balance {{amount}}. Top up",
+  "com_eia_balance_readonly_aria": "Balance {{amount}}",
   "com_eia_balance_low_tooltip": "Low balance: top up to keep using AI",
   "com_eia_topup_cta": "Top up",
   "com_eia_topup_title": "Top up balance",
@@ -3443,5 +3444,6 @@
   "com_eia_usage_topup_amount": "+${{amount}}",
   "com_eia_usage_updated": "Last updated: {{date}}",
   "com_eia_usage_refresh": "Refresh",
+  "com_eia_balance_readonly_tooltip": "Your available balance",
   "com_eia_balance_tooltip": "Your balance. Click to top up"
 }

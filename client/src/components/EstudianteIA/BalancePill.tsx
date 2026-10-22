@@ -17,6 +17,8 @@ function BalancePill() {
   const [purchase, setPurchase] = useState<Purchase | null>(null);
   const { data, isLoading, isError, isLow, refresh } = useAccount();
 
+  // Sin forma de pago (antes de tener Yappy) el saldo solo se muestra: lo carga el admin.
+  const canTopUp = data?.topupsEnabled ?? false;
   // Saldo real: una reserva de un mensaje en curso no lo hace "bajar" (el detalle está en Uso).
   let label = `$${data?.wallet.balance ?? '0.00'}`;
   if (isLoading) {
@@ -26,22 +28,33 @@ function BalancePill() {
     label = localize('com_eia_balance_unavailable');
   }
 
+  let tooltip = localize('com_eia_balance_readonly_tooltip');
+  if (canTopUp) {
+    tooltip = isLow ? localize('com_eia_balance_low_tooltip') : localize('com_eia_balance_tooltip');
+  }
+
   return (
     <>
       <TooltipAnchor
-        description={
-          isLow ? localize('com_eia_balance_low_tooltip') : localize('com_eia_balance_tooltip')
-        }
+        description={tooltip}
+        // El ancla pone cursor-pointer; sin recarga, el saldo no parece clicable.
+        className={canTopUp ? undefined : 'cursor-default'}
         render={
           <button
             type="button"
-            onClick={() => setPurchase({ kind: 'topup' })}
-            aria-label={localize('com_eia_balance_aria', { amount: label })}
+            onClick={canTopUp ? () => setPurchase({ kind: 'topup' }) : undefined}
+            aria-disabled={!canTopUp}
+            aria-label={
+              canTopUp
+                ? localize('com_eia_balance_aria', { amount: label })
+                : localize('com_eia_balance_readonly_aria', { amount: label })
+            }
             className={cn(
               'flex h-9 items-center gap-1.5 rounded-xl border px-3 text-sm font-medium transition-colors',
-              isLow
+              isLow && canTopUp
                 ? 'border-border-medium text-text-warning hover:bg-surface-hover'
-                : 'border-border-light text-text-primary hover:bg-surface-hover bg-transparent',
+                : 'border-border-light text-text-primary bg-transparent',
+              canTopUp && 'hover:bg-surface-hover',
             )}
           >
             <Wallet className="size-4" aria-hidden="true" />
