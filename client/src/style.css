@@ -2577,3 +2577,25 @@ html[data-input-modality='keyboard']
 .dark img[src*='/assets/estudiante-ia/'] {
   filter: invert(1);
 }
+
+/* NovexIA: mientras llega la respuesta, cada bloque nuevo (párrafo, título, elemento de
+   lista, tabla) aparece con un desvanecido corto en vez de saltar de golpe. Los bloques
+   ya mostrados no se reaniman: React conserva sus elementos entre trozos. */
+@keyframes eia-stream-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.result-streaming :is(p, li, h1, h2, h3, h4, blockquote, pre, table) {
+  animation: eia-stream-fade-in 320ms ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .result-streaming :is(p, li, h1, h2, h3, h4, blockquote, pre, table) {
+    animation: none;
+  }
+}

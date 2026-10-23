@@ -116,6 +116,7 @@ export default function MessageRow({
       id={id}
       role="group"
       aria-label={ariaLabel}
+      data-author={isCreatedByUser ? 'user' : 'assistant'}
       className={cn(
         'message-render group font-theme-ui duration-theme-normal mx-auto flex min-w-0 flex-1 transition-[max-width] motion-reduce:transition-none',
         'focus-visible:ring-text-primary focus-visible:ring-2 focus-visible:outline-hidden',

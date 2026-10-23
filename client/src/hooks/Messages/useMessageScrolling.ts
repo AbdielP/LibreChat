@@ -20,6 +20,25 @@ const glideTimeout = 700;
 const attachThreshold = 150;
 const detachThreshold = 24;
 
+/** Gap kept above the reader's question once the view stops following the answer:
+ *  the height of the floating chat header, so the question stays fully readable. */
+const questionTopMargin = 64;
+
+/**
+ * NovexIA: the scroll position that puts the newest user message at the top of the
+ * view, the furthest the thread may follow a streaming answer. Without one (no user
+ * message yet) there is no cap.
+ */
+function latestQuestionTop(scrollEl: HTMLElement, contentEl: HTMLElement | null): number {
+  const rows = contentEl?.querySelectorAll<HTMLElement>('[data-author="user"]');
+  const question = rows && rows.length > 0 ? rows[rows.length - 1] : null;
+  if (!question) {
+    return Number.POSITIVE_INFINITY;
+  }
+  const offset = question.getBoundingClientRect().top - scrollEl.getBoundingClientRect().top;
+  return Math.max(0, scrollEl.scrollTop + offset - questionTopMargin);
+}
+
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' &&
   typeof window.matchMedia === 'function' &&
@@ -180,8 +199,14 @@ export default function useMessageScrolling(messagesTree?: TMessage[] | null) {
     if (!scrollEl) {
       return;
     }
-    const target = Math.max(0, scrollEl.scrollHeight - scrollEl.clientHeight);
-    if (Math.abs(scrollEl.scrollTop - target) < 1) {
+    const target = Math.min(
+      Math.max(0, scrollEl.scrollHeight - scrollEl.clientHeight),
+      latestQuestionTop(scrollEl, contentRef.current),
+    );
+    /** NovexIA: like ChatGPT, the thread follows the answer only until the reader's
+     *  question reaches the top of the view. From there it holds still and the answer
+     *  grows below it, so its beginning never scrolls away. Never moves the reader up. */
+    if (target <= scrollEl.scrollTop || Math.abs(scrollEl.scrollTop - target) < 1) {
       return;
     }
 
@@ -220,8 +245,11 @@ export default function useMessageScrolling(messagesTree?: TMessage[] | null) {
       /** Following stands down for the whole trip, so anything that streamed in
        *  meanwhile moved the bottom past the target this glide aimed at. Close that
        *  gap on arrival, or a short answer settles a few lines short of its end. */
-      const settled = Math.max(0, scrollEl.scrollHeight - scrollEl.clientHeight);
-      if (Math.abs(scrollEl.scrollTop - settled) >= 1) {
+      const settled = Math.min(
+        Math.max(0, scrollEl.scrollHeight - scrollEl.clientHeight),
+        latestQuestionTop(scrollEl, contentRef.current),
+      );
+      if (settled > scrollEl.scrollTop && Math.abs(scrollEl.scrollTop - settled) >= 1) {
         scrollEl.scrollTop = settled;
       }
       lastScrollTopRef.current = scrollEl.scrollTop;
