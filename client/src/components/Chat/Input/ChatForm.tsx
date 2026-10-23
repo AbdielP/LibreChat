@@ -703,7 +703,8 @@ const ChatForm = memo(function ChatForm({
   const baseClasses = useMemo(
     () =>
       cn(
-        'md:py-3.5 m-0 w-full resize-none py-3.25 placeholder:text-text-tertiary bg-transparent [&:has(textarea:focus)]:shadow-[0_2px_6px_rgba(0,0,0,.05)]',
+        // NovexIA: menos relleno vertical (la barra se veía muy gruesa en laptops).
+        'm-0 w-full resize-none pt-3 pb-1 placeholder:text-text-tertiary bg-transparent [&:has(textarea:focus)]:shadow-[0_2px_6px_rgba(0,0,0,.05)]',
         isCollapsed ? 'max-h-[3.25rem]' : 'max-h-[45vh] md:max-h-[55vh]',
         'px-5',
       ),
@@ -766,6 +767,8 @@ const ChatForm = memo(function ChatForm({
            asked for less motion gets the new position outright — this one is a
            slide across the page rather than decoration. */
         'mx-auto flex w-full flex-row gap-3 transition-[max-width,margin-bottom] duration-300 motion-reduce:transition-none sm:px-2',
+        // NovexIA: en el celular la barra no va pegada al borde: margen y zona del gesto de inicio.
+        'max-sm:px-3 max-sm:pb-[max(0.75rem,env(safe-area-inset-bottom))]',
         maximizeChatSpace ? 'max-w-full' : 'md:max-w-3xl xl:max-w-4xl',
         bottomClearance,
       )}
@@ -847,7 +850,8 @@ const ChatForm = memo(function ChatForm({
                    squared off at the bottom (`rounded-t-theme-surface-lg`) and no disclaimer
                    follows it — so the action row is the last thing in it, with no
                    band of padding under the buttons. */
-                'rounded-t-theme-surface-lg sm:rounded-theme-surface-lg relative flex w-full grow flex-col overflow-hidden',
+                // NovexIA: redondeada también en el celular, donde flota con margen (ver el form).
+                'rounded-theme-surface-lg relative flex w-full grow flex-col overflow-hidden',
                 composerSurfaceClasses(),
                 isTextAreaFocused ? composerSurfaceShadow.focused : composerSurfaceShadow.blurred,
                 /* Temporary-chat accent is a ChatForm-only override, not part of

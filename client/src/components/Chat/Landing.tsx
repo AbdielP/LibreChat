@@ -26,7 +26,8 @@ function getTextSizeClass(text: string | undefined | null) {
   }
 
   if (text.length < 56) {
-    return 'text-2xl sm:text-4xl';
+    // NovexIA: saludo más discreto (era text-2xl sm:text-4xl).
+    return 'text-xl sm:text-3xl';
   }
 
   if (text.length < 70) {
