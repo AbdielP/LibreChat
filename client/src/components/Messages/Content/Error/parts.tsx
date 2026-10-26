@@ -76,9 +76,13 @@ export function readObject(json: ErrorPayload | undefined, key: string): ErrorPa
   return typeof value === 'object' && value !== null && !Array.isArray(value) ? value : undefined;
 }
 
-/** The name a reader recognizes for an endpoint id. */
-export const getProviderName = (endpoint: string): string =>
-  (alternateName[endpoint] as string | undefined) ?? endpoint;
+/**
+ * The name a reader recognizes for an endpoint id. A custom endpoint's id is an internal key:
+ * its configured label (`modelDisplayLabel`) names it when the config is at hand.
+ */
+export const getProviderName = (endpoint: string, endpointsConfig?: TEndpointsConfig): string =>
+  getEndpointField(endpointsConfig, endpoint, 'modelDisplayLabel') ||
+  ((alternateName[endpoint] as string | undefined) ?? endpoint);
 
 export type ErrorEndpoint = {
   /** The endpoint the failed request ran against, when it is knowable. */
@@ -86,6 +90,11 @@ export type ErrorEndpoint = {
   endpointType?: EModelEndpoint;
   /** Display name for the provider; undefined when the endpoint cannot be resolved. */
   provider?: string;
+  /**
+   * The deployment names this endpoint (`modelDisplayLabel`): it is the deployment's own
+   * product, so its errors read as product copy and never surface raw provider prose.
+   */
+  branded?: boolean;
   /** The model that produced the failure. */
   model?: string;
   /** The saved agent that produced the failure, when the agents map can resolve it. */
@@ -217,10 +226,14 @@ export function useErrorEndpoint(source?: ErrorSource, payloadEndpoint?: string)
     const endpointType = endpoint
       ? (getEndpointField(endpointsConfig, endpoint, 'type') as EModelEndpoint | undefined)
       : undefined;
+    const label = endpoint
+      ? getEndpointField(endpointsConfig, endpoint, 'modelDisplayLabel')
+      : undefined;
     return {
       endpoint,
       endpointType,
-      provider: endpoint ? getProviderName(endpoint) : undefined,
+      provider: endpoint ? getProviderName(endpoint, endpointsConfig) : undefined,
+      branded: Boolean(label),
       model: agentRow ? agentIdentity?.model : rowModel,
       agent: agentIdentity?.agent,
       userProvidesCredentials: resolveCredentialOwnership(endpointsConfig, endpoint),

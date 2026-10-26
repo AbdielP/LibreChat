@@ -647,6 +647,7 @@
   "com_error_files_validation": "Se produjo un error durante la validación del archivo.",
   "com_error_final_context_overflow": "Esta solicitud necesita {{0}} tokens, pero solo caben {{1}} en la ventana de contexto actual.",
   "com_error_final_context_overflow_unknown": "Esta solicitud supera la ventana de contexto actual y no se pudo reducir para que quepa.",
+  "com_error_file_too_large": "El archivo es demasiado grande ({{0}} MB). El máximo por archivo es {{1}} MB.",
   "com_error_google_error": "Google rechazó esta solicitud.",
   "com_error_google_tool_conflict": "El uso de las herramientas integradas de Google no es compatible con herramientas externas. Por favor, deshabilite las herramientas integradas o las externas.",
   "com_error_google_video_unprocessable": "No se pudo procesar el video enlazado. Lo más probable es que sea demasiado largo para este modelo, pero también puede no estar disponible en esta región o tener restricciones. Prueba con un video más corto o describe las partes relevantes en tu mensaje.",

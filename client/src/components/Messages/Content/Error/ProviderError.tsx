@@ -102,9 +102,24 @@ export default function ProviderError({ json, message }: ErrorRendererProps) {
 }
 
 /** Fallback for provider prose and payloads whose error code has no localized renderer. */
+/** A file the provider rejected for its size, worded for the reader instead of the log. */
+const FILE_TOO_LARGE =
+  /(?:PDF|Image|Document) validation failed: .*?file size \((\d+(?:\.\d+)?)\s*MB\) exceeds the (\d+(?:\.\d+)?)\s*MB limit/i;
+
+/**
+ * A branded deployment shows its own copy, not English diagnostics: provider prose stays out
+ * unless it already reads as user-facing text in the reader's language (the deployment's own
+ * gateway messages do).
+ */
+function readerFacing(prose: string | undefined, branded: boolean): string | undefined {
+  if (prose == null || !branded) return prose;
+  const technical = /\b(failed|exceeds|error|invalid|validation|status|request)\b|[{}]/i;
+  return technical.test(prose) ? undefined : prose;
+}
+
 export function UnclassifiedError({ json, text, message }: UnclassifiedErrorProps) {
   const localize = useLocalize();
-  const { provider } = useErrorEndpoint(message);
+  const { provider, branded = false } = useErrorEndpoint(message);
   const jsonString = extractJson(text);
   const payloadProse =
     readProviderError(json) ?? readString(json, 'message') ?? readString(json, 'info');
@@ -115,6 +130,10 @@ export function UnclassifiedError({ json, text, message }: UnclassifiedErrorProp
   const withoutPayload =
     jsonString !== '' ? text.replace(jsonString, () => payloadProse ?? '') : text;
   const prose = stripLangChainTroubleshootingUrl(withoutPayload).trim() || payloadProse;
+  const tooLarge = prose != null ? FILE_TOO_LARGE.exec(prose) : null;
+  if (tooLarge) {
+    return <>{localize('com_error_file_too_large', { 0: tooLarge[1], 1: tooLarge[2] })}</>;
+  }
   if (
     prose != null &&
     /^This turn exceeds the configured (attachment count|total attachment size|extracted document text) limit \(/.test(
@@ -124,7 +143,7 @@ export function UnclassifiedError({ json, text, message }: UnclassifiedErrorProp
     return (
       <ErrorWithDetail
         headline={localize('com_error_attachment_limit')}
-        detail={prose}
+        detail={branded ? undefined : prose}
         label={localize('com_error_details_attachment')}
       />
     );
@@ -139,7 +158,7 @@ export function UnclassifiedError({ json, text, message }: UnclassifiedErrorProp
   return (
     <ErrorWithDetail
       headline={headline}
-      detail={prose}
+      detail={readerFacing(prose, branded)}
       label={localize('com_error_details_provider')}
     />
   );

@@ -1305,3 +1305,45 @@ describe('Error — agent handoffs within a row', () => {
     expect(document.body.textContent).not.toContain('Google');
   });
 });
+
+describe('branded custom endpoint (modelDisplayLabel)', () => {
+  const brandedMessage = {
+    endpoint: 'estudiante-ia',
+    model: 'gpt-6-luna',
+    createdAt: new Date('2026-10-25T12:00:00.000Z'),
+  } as unknown as TMessage;
+
+  beforeEach(() => {
+    mockEndpointsData = {
+      'estudiante-ia': { type: 'custom', modelDisplayLabel: 'NovexIA' },
+    };
+  });
+
+  it('names the product, never the internal endpoint key', () => {
+    renderError({ error: { message: 'Algo salió mal.' } }, brandedMessage);
+    expect(screen.getByText(localized('com_error_provider_failed', 'NovexIA'))).toBeInTheDocument();
+    expect(document.body.textContent).not.toContain('estudiante-ia');
+  });
+
+  it('words an oversized file for the reader instead of the English diagnostic', () => {
+    renderError(
+      'PDF validation failed: PDF file size (11MB) exceeds the 10MB limit',
+      brandedMessage,
+    );
+    expect(
+      screen.getByText(
+        catalog.com_error_file_too_large.replace('{{0}}', '11').replace('{{1}}', '10'),
+      ),
+    ).toBeInTheDocument();
+    expect(document.body.textContent).not.toContain('validation failed');
+  });
+
+  it('keeps raw provider diagnostics out of its copy', () => {
+    renderError(
+      { error: { message: 'Invalid request: status 400 from upstream' } },
+      brandedMessage,
+    );
+    expect(document.body.textContent).not.toContain('status 400');
+    expect(screen.getByText(localized('com_error_provider_failed', 'NovexIA'))).toBeInTheDocument();
+  });
+});
