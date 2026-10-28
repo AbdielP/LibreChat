@@ -88,6 +88,7 @@ const DeleteAccount = ({ disabled = false }: { title?: string; disabled?: boolea
             <ul className="text-text-warning font-semibold">
               <li>{localize('com_nav_delete_warning')}</li>
               <li>{localize('com_nav_delete_data_info')}</li>
+              <li>{localize('com_nav_delete_balance_info')}</li>
             </ul>
           </div>
           <div className="flex-col items-center justify-center">

@@ -826,6 +826,7 @@
   "com_nav_delete_account_button": "Eliminar mi cuenta permanentemente",
   "com_nav_delete_account_confirm": "Eliminar cuenta - ¿Está seguro?",
   "com_nav_delete_account_email_placeholder": "Por favor ingrese el correo electrónico de su cuenta",
+  "com_nav_delete_balance_info": "Perderás el saldo que te quede: no se devuelve (así lo indican los términos).",
   "com_nav_delete_cache_storage": "Eliminar almacenamiento caché de TTS",
   "com_nav_delete_cache_storage_info": "El audio de texto a voz se guarda en tu navegador para no volver a pedirlo al reproducir un mensaje. Borrar la caché libera ese espacio; el audio se genera otra vez la próxima vez que lo reproduzcas. Este botón no está disponible si no hay nada guardado, como cuando nunca has usado texto a voz.",
   "com_nav_delete_data_info": "Todos sus datos serán eliminados.",
