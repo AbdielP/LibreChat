@@ -67,6 +67,17 @@ export interface PaymentSession {
   simulatorUrl: string | null;
 }
 
+/** Lo que costó un mensaje y en qué se fue (resumen bajo cada respuesta). */
+export interface MessageCost {
+  messageId: string;
+  chargedMicros: string;
+  models: string[];
+  calls: number;
+  webSearches: number;
+  tools: string[];
+  dataAnalysis: boolean;
+}
+
 export class BillingApiError extends Error {
   constructor(
     readonly status: number,
@@ -101,6 +112,13 @@ export const billingApi = {
   getUsage: (token: string) => request<Usage>('/me/usage', token),
   getPlans: (token: string) => request<Plan[]>('/me/plans', token),
   getModels: (token: string) => request<ModelEstimate[]>('/me/models', token),
+  /** Qué está haciendo el mensaje en curso (ej. "Creando el archivo…"), o null. */
+  getActivity: (token: string) => request<{ status: string | null }>('/me/activity', token),
+  getMessageCosts: (token: string, ids: string[]) =>
+    request<MessageCost[]>(
+      `/me/message-costs?ids=${ids.map(encodeURIComponent).join(',')}`,
+      token,
+    ),
   createTopUp: (token: string, amountCents: number) =>
     request<PaymentSession>('/me/topups', token, {
       method: 'POST',

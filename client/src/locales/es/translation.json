@@ -3478,5 +3478,17 @@
   "com_eia_usage_updated": "Última actualización: {{date}}",
   "com_eia_usage_refresh": "Actualizar",
   "com_eia_balance_readonly_tooltip": "Tu saldo disponible",
-  "com_eia_balance_tooltip": "Tu saldo. Clic para recargar"
+  "com_eia_balance_tooltip": "Tu saldo. Clic para recargar",
+  "com_eia_cost_free": "Sin costo",
+  "com_eia_cost_search_one": "búsqueda web",
+  "com_eia_cost_search_other": "{{count}} búsquedas web",
+  "com_eia_cost_tool_document": "documento",
+  "com_eia_cost_tool_edit": "edición",
+  "com_eia_cost_tool_image": "imagen",
+  "com_eia_cost_tool_photos": "fotos",
+  "com_eia_cost_tool_chart": "gráfico",
+  "com_eia_cost_tool_diagram": "diagrama",
+  "com_eia_cost_tool_references": "referencias",
+  "com_eia_cost_tool_analysis": "análisis de datos",
+  "com_eia_cost_details": "Lo que costó este mensaje: {{calls}} llamada(s) a la IA, entre la respuesta, el título del chat, la memoria y las herramientas. El detalle está en Configuración → Uso."
 }

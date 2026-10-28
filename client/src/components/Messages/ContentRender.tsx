@@ -26,6 +26,7 @@ import MessageRow from '~/components/Chat/Messages/ui/MessageRow';
 import MessageIcon from '~/components/Chat/Messages/MessageIcon';
 import { showThinkingAtom } from '~/store/showThinking';
 import SubRow from '~/components/Chat/Messages/SubRow';
+import { ActivityStatus, MessageCost } from '~/components/EstudianteIA';
 import { AuthorContext } from '~/Providers';
 import store from '~/store';
 
@@ -198,6 +199,8 @@ const ContentRender = memo(function ContentRender({
             siblingIdx,
             siblingCount,
           }) && <Elapsed index={index} />}
+          {/* estudiante-ia-app: qué está haciendo la IA, junto al contador. */}
+          {isSubmitting && isLatestMessage && !msg.isCreatedByUser && <ActivityStatus />}
           {/* While the answer is generating every other action is withheld, which
               would otherwise leave this counter sitting alone under a half-written
               response. It reveals on hover there, like the actions it sits with. */}
@@ -222,6 +225,10 @@ const ContentRender = memo(function ContentRender({
             handleFeedback={handleFeedback}
             isLast={isLast}
           />
+          {/* estudiante-ia-app: costo de la respuesta, cuando ya terminó. */}
+          {!msg.isCreatedByUser && !(isSubmitting && isLatestMessage) && (
+            <MessageCost messageId={msg.messageId} />
+          )}
         </SubRow>
       }
     >

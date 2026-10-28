@@ -3447,5 +3447,17 @@
   "com_eia_usage_updated": "Last updated: {{date}}",
   "com_eia_usage_refresh": "Refresh",
   "com_eia_balance_readonly_tooltip": "Your available balance",
-  "com_eia_balance_tooltip": "Your balance. Click to top up"
+  "com_eia_balance_tooltip": "Your balance. Click to top up",
+  "com_eia_cost_free": "No charge",
+  "com_eia_cost_search_one": "web search",
+  "com_eia_cost_search_other": "{{count}} web searches",
+  "com_eia_cost_tool_document": "document",
+  "com_eia_cost_tool_edit": "edit",
+  "com_eia_cost_tool_image": "image",
+  "com_eia_cost_tool_photos": "photos",
+  "com_eia_cost_tool_chart": "chart",
+  "com_eia_cost_tool_diagram": "diagram",
+  "com_eia_cost_tool_references": "references",
+  "com_eia_cost_tool_analysis": "data analysis",
+  "com_eia_cost_details": "What this message cost: {{calls}} AI call(s), across the answer, the chat title, memory and tools. Details in Settings → Usage."
 }
