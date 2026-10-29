@@ -2599,3 +2599,14 @@ html[data-input-modality='keyboard']
     animation: none;
   }
 }
+
+/* NovexIA: imágenes que se crearon para un documento. Van después del enlace del archivo,
+   como miniaturas legibles una al lado de la otra; un clic las abre en grande. */
+img[alt='Miniatura'] {
+  display: inline-block;
+  width: 10rem !important;
+  height: auto;
+  margin: 0 0.5rem 0.5rem 0;
+  border-radius: 0.5rem;
+  vertical-align: top;
+}
