@@ -3442,7 +3442,7 @@
   "com_eia_balance_unavailable": "Saldo no disponible",
   "com_eia_balance_aria": "Saldo {{amount}}. Recargar",
   "com_eia_balance_readonly_aria": "Saldo {{amount}}",
-  "com_eia_balance_low_tooltip": "Saldo bajo: recarga para seguir usando la IA",
+  "com_eia_balance_low_tooltip": "Saldo bajo. Clic para recargar",
   "com_eia_topup_cta": "Recargar",
   "com_eia_topup_title": "Recargar saldo",
   "com_eia_topup_description": "Paga con Yappy y el saldo se acredita al instante. Solo pagas lo que usas.",
@@ -3490,5 +3490,12 @@
   "com_eia_cost_tool_diagram": "diagrama",
   "com_eia_cost_tool_references": "referencias",
   "com_eia_cost_tool_analysis": "análisis de datos",
-  "com_eia_cost_details": "Lo que costó este mensaje: {{calls}} llamada(s) a la IA, entre la respuesta, el título del chat, la memoria y las herramientas. El detalle está en Configuración → Uso."
+  "com_eia_cost_details": "Lo que costó este mensaje: {{calls}} llamada(s) a la IA, entre la respuesta, el título del chat, la memoria y las herramientas. El detalle está en Configuración → Uso.",
+  "com_eia_balance_low_readonly_tooltip": "Saldo bajo",
+  "com_eia_notice_low": "Te quedan ${{amount}} de saldo.",
+  "com_eia_notice_empty": "Te quedaste sin saldo.",
+  "com_eia_notice_ask_topup": "Pedir una recarga",
+  "com_eia_balance_exhausted": "No te alcanza el saldo para este mensaje.",
+  "com_eia_notice_free_left": "Te quedaste sin saldo. Te quedan {{count}} mensajes gratis hoy con Luna.",
+  "com_eia_notice_free_used": "Te quedaste sin saldo y usaste tus mensajes gratis de hoy."
 }

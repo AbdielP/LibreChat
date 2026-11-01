@@ -3411,7 +3411,7 @@
   "com_eia_balance_unavailable": "Balance unavailable",
   "com_eia_balance_aria": "Balance {{amount}}. Top up",
   "com_eia_balance_readonly_aria": "Balance {{amount}}",
-  "com_eia_balance_low_tooltip": "Low balance: top up to keep using AI",
+  "com_eia_balance_low_tooltip": "Low balance. Click to top up",
   "com_eia_topup_cta": "Top up",
   "com_eia_topup_title": "Top up balance",
   "com_eia_topup_description": "Pay with Yappy and your balance is credited instantly. You only pay for what you use.",
@@ -3459,5 +3459,12 @@
   "com_eia_cost_tool_diagram": "diagram",
   "com_eia_cost_tool_references": "references",
   "com_eia_cost_tool_analysis": "data analysis",
-  "com_eia_cost_details": "What this message cost: {{calls}} AI call(s), across the answer, the chat title, memory and tools. Details in Settings → Usage."
+  "com_eia_cost_details": "What this message cost: {{calls}} AI call(s), across the answer, the chat title, memory and tools. Details in Settings → Usage.",
+  "com_eia_balance_low_readonly_tooltip": "Low balance",
+  "com_eia_notice_low": "You have ${{amount}} left.",
+  "com_eia_notice_empty": "You are out of balance.",
+  "com_eia_notice_ask_topup": "Ask for a top-up",
+  "com_eia_balance_exhausted": "Your balance is not enough for this message.",
+  "com_eia_notice_free_left": "You are out of balance. You have {{count}} free messages left today with Luna.",
+  "com_eia_notice_free_used": "You are out of balance and used today's free messages."
 }

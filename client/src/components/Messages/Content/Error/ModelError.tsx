@@ -64,6 +64,14 @@ export default function ModelError({ json, message }: ErrorRendererProps) {
    * text through: a gateway or proxy rejection explains itself there, and nothing generic can.
    */
   const status = readNumber(json, 'status');
+  /**
+   * NovexIA: 402 es saldo o tope del pase. El texto lo escribe billing-api para el usuario
+   * (dice qué pasó y qué hacer), así que va solo, sin el titular de falla del proveedor.
+   */
+  if (status === 402) {
+    const own = readString(json, 'message')?.replace(/^402\s+/, '');
+    return own ?? localize('com_eia_balance_exhausted');
+  }
   const headline =
     status != null
       ? localize('com_error_upstream_model_status', { 0: status })

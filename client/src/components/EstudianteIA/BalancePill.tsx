@@ -1,6 +1,6 @@
 import { memo, useState } from 'react';
-import { Wallet } from 'lucide-react';
 import { TooltipAnchor } from '@librechat/client';
+import { TriangleAlert, Wallet } from 'lucide-react';
 import type { Purchase } from './Checkout';
 import { useAccount } from './useAccount';
 import { useLocalize } from '~/hooks';
@@ -28,7 +28,9 @@ function BalancePill() {
     label = localize('com_eia_balance_unavailable');
   }
 
-  let tooltip = localize('com_eia_balance_readonly_tooltip');
+  let tooltip = isLow
+    ? localize('com_eia_balance_low_readonly_tooltip')
+    : localize('com_eia_balance_readonly_tooltip');
   if (canTopUp) {
     tooltip = isLow ? localize('com_eia_balance_low_tooltip') : localize('com_eia_balance_tooltip');
   }
@@ -51,13 +53,17 @@ function BalancePill() {
             }
             className={cn(
               'flex h-9 items-center gap-1.5 rounded-xl border px-3 text-sm font-medium transition-colors',
-              isLow && canTopUp
-                ? 'border-border-medium text-text-warning hover:bg-surface-hover'
+              isLow
+                ? 'border-border-medium text-text-warning'
                 : 'border-border-light text-text-primary bg-transparent',
               canTopUp && 'hover:bg-surface-hover',
             )}
           >
-            <Wallet className="size-4" aria-hidden="true" />
+            {isLow ? (
+              <TriangleAlert className="size-4" aria-hidden="true" />
+            ) : (
+              <Wallet className="size-4" aria-hidden="true" />
+            )}
             <span className="tabular-nums">{label}</span>
           </button>
         }

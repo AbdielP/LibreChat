@@ -31,6 +31,7 @@ import { pendingApprovalActionFamily } from './approval/state';
 import ProjectBadge from '~/components/Projects/ProjectBadge';
 import { composerLiftFamily } from './Input/Composer/state';
 import { OwnerTextProvider } from './Messages/PrivateText';
+import { BalanceNotice } from '~/components/EstudianteIA';
 import { useGetMessagesByConvoId } from '~/data-provider';
 import Footer, { useConfiguredFooter } from './Footer';
 import { AskAnswerHostProvider } from './ask/state';
@@ -257,18 +258,21 @@ function ChatView({
                                 {localize('com_ui_subagent_thread_read_only')}
                               </div>
                             ) : (
-                              <ChatForm
-                                index={index}
-                                routePending={routePending}
-                                placeholder={chatFormPlaceholder}
-                                project={isProjectLandingPage ? project : undefined}
-                                isLandingPage={isLandingPage}
-                                enterToSend={enterToSend}
-                                autoSendText={autoSendText}
-                                speechSettingsInitialized={speechSettingsInitialized}
-                                footerBelow={footerBelow}
-                                centerFormOnLanding={centerFormOnLanding}
-                              />
+                              <>
+                                {index === 0 && <BalanceNotice />}
+                                <ChatForm
+                                  index={index}
+                                  routePending={routePending}
+                                  placeholder={chatFormPlaceholder}
+                                  project={isProjectLandingPage ? project : undefined}
+                                  isLandingPage={isLandingPage}
+                                  enterToSend={enterToSend}
+                                  autoSendText={autoSendText}
+                                  speechSettingsInitialized={speechSettingsInitialized}
+                                  footerBelow={footerBelow}
+                                  centerFormOnLanding={centerFormOnLanding}
+                                />
+                              </>
                             )}
                             {/* The generic disclaimer and the policy links are the
                               welcome screen's; a deployment's own footer stays

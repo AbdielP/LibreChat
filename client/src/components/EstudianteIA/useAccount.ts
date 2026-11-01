@@ -8,7 +8,12 @@ import store from '~/store';
 export const ACCOUNT_QUERY_KEY = ['estudiante-ia', 'usage'] as const;
 
 /** Saldo extra por debajo del cual se avisa (si no hay pase con margen). */
-export const LOW_BALANCE_USD = 0.5;
+export const LOW_BALANCE_USD = 0.3;
+/**
+ * Por debajo no alcanza ni para un mensaje corto de Luna: cada mensaje lleva unos 7.400
+ * tokens de instrucciones y herramientas (~$0.0011) más el mínimo de respuesta.
+ */
+export const EMPTY_BALANCE_MICROS = 2_000;
 /** % del tope semanal a partir del cual se avisa. */
 export const PASS_WARNING_PERCENT = 80;
 
@@ -49,12 +54,16 @@ export function useAccount() {
   const balance = query.data ? Number(query.data.wallet.balance) : null;
   const passNearLimit = pass !== null && pass.week.percentUsed >= PASS_WARNING_PERCENT;
   const walletLow = balance !== null && balance < LOW_BALANCE_USD;
+  const walletEmpty =
+    query.data != null && Number(query.data.wallet.availableMicros) < EMPTY_BALANCE_MICROS;
 
   return {
     ...query,
     pass,
     /** Hay que avisar: el pase está por agotarse (o no hay pase) y el saldo extra es bajo. */
     isLow: walletLow && (pass === null || passNearLimit),
+    /** Sin pase con margen y sin saldo para un mensaje: el chat va a rechazar lo que envíe. */
+    isEmpty: walletEmpty && (pass === null || pass.week.percentUsed >= 100),
     passNearLimit,
     refresh: () => queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY }),
   };

@@ -449,6 +449,21 @@ describe('Error — provider and model identity', () => {
     expect(document.body.textContent).not.toContain('OpenAI');
   });
 
+  /** NovexIA: billing-api writes the 402 sentence for the reader, so it stands alone. */
+  it('shows the billing message alone on a 402', () => {
+    renderError(
+      'The model provider could not complete this request.\n' +
+        JSON.stringify({
+          type: ErrorTypes.UPSTREAM_MODEL_ERROR,
+          status: 402,
+          message: '402 No te alcanza el saldo para este mensaje.',
+        }),
+      providerMessage,
+    );
+    expect(screen.getByText('No te alcanza el saldo para este mensaje.')).toBeInTheDocument();
+    expect(document.body.textContent).not.toContain('402');
+  });
+
   it.each([
     'Unexpected token } in JSON',
     'gateway rejected {request',

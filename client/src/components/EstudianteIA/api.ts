@@ -10,6 +10,8 @@ export type OrderStatus = 'PENDING' | 'PAID' | 'REJECTED' | 'CANCELLED' | 'EXPIR
 export interface Usage {
   /** false sin forma de pago configurada: no se muestra "Recargar" (el saldo lo carga el admin). */
   topupsEnabled: boolean;
+  /** Mensajes gratis de hoy con Luna: solo aplican si no tiene saldo ni pase (`eligible`). */
+  freeTier?: { eligible: boolean; limit: number; used: number };
   pass: {
     planName: string;
     endsAt: string;
@@ -115,10 +117,7 @@ export const billingApi = {
   /** Qué está haciendo el mensaje en curso (ej. "Creando el archivo…"), o null. */
   getActivity: (token: string) => request<{ status: string | null }>('/me/activity', token),
   getMessageCosts: (token: string, ids: string[]) =>
-    request<MessageCost[]>(
-      `/me/message-costs?ids=${ids.map(encodeURIComponent).join(',')}`,
-      token,
-    ),
+    request<MessageCost[]>(`/me/message-costs?ids=${ids.map(encodeURIComponent).join(',')}`, token),
   createTopUp: (token: string, amountCents: number) =>
     request<PaymentSession>('/me/topups', token, {
       method: 'POST',
