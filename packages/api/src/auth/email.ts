@@ -451,7 +451,7 @@ export function createEmailChangeService(deps: EmailChangeDeps): {
       deps,
       {
         email: oldEmail,
-        subject: 'Email change requested',
+        subject: 'Se pidió cambiar tu correo',
         payload: {
           appName: deps.appName,
           name: displayName(user),
@@ -519,7 +519,7 @@ export function createEmailChangeService(deps: EmailChangeDeps): {
     try {
       await deps.sendEmail({
         email: newEmail,
-        subject: 'Verify your new email address',
+        subject: 'Confirma tu correo nuevo',
         payload: {
           appName: deps.appName,
           name: displayName(user),
@@ -760,7 +760,7 @@ export function createEmailChangeService(deps: EmailChangeDeps): {
         deps,
         {
           email: oldEmail,
-          subject: 'Your email address was changed',
+          subject: 'Tu correo cambió',
           payload: confirmationPayload,
           template: 'emailChanged.handlebars',
         },
@@ -770,7 +770,7 @@ export function createEmailChangeService(deps: EmailChangeDeps): {
         deps,
         {
           email,
-          subject: 'Your email address was changed',
+          subject: 'Tu correo cambió',
           payload: confirmationPayload,
           template: 'emailChanged.handlebars',
         },
