@@ -396,6 +396,87 @@ describe('socialLogin', () => {
     });
   });
 
+  describe('Linking a password account (estudiante-ia-app)', () => {
+    const { updateUser } = require('~/models');
+    const email = 'user@example.com';
+    const googleId = 'google-user-123';
+    const profile = (verified) => ({
+      id: googleId,
+      emails: [{ value: email, verified }],
+      photos: [],
+      name: { givenName: 'Ana', familyName: 'Ruiz' },
+    });
+    const run = async (existingUser, verified = true) => {
+      findUser.mockResolvedValueOnce(null).mockResolvedValueOnce(existingUser);
+      const callback = jest.fn();
+      await socialLogin('google', mockGetProfileDetails)(
+        null,
+        null,
+        null,
+        profile(verified),
+        callback,
+      );
+      return callback;
+    };
+
+    it('links Google and logs in when both sides verified the email', async () => {
+      const existingUser = { _id: 'u1', email, provider: 'local', emailVerified: true };
+      findUser.mockResolvedValueOnce(null).mockResolvedValueOnce(existingUser);
+      findUser.mockResolvedValueOnce({ ...existingUser, googleId });
+      const callback = jest.fn();
+      await socialLogin('google', mockGetProfileDetails)(null, null, null, profile(true), callback);
+
+      expect(updateUser).toHaveBeenCalledWith('u1', { googleId });
+      expect(callback).toHaveBeenCalledWith(null, expect.objectContaining({ _id: 'u1', googleId }));
+      expect(createSocialUser).not.toHaveBeenCalled();
+    });
+
+    it('logs in again without relinking once linked', async () => {
+      const callback = await run({
+        _id: 'u1',
+        email,
+        provider: 'local',
+        emailVerified: true,
+        googleId,
+      });
+      expect(updateUser).not.toHaveBeenCalled();
+      expect(callback).toHaveBeenCalledWith(null, expect.objectContaining({ _id: 'u1' }));
+    });
+
+    it('rejects when the account never confirmed its email', async () => {
+      const callback = await run({ _id: 'u1', email, provider: 'local', emailVerified: false });
+      expect(updateUser).not.toHaveBeenCalled();
+      expect(callback).toHaveBeenCalledWith(
+        expect.objectContaining({ code: ErrorTypes.AUTH_FAILED }),
+      );
+    });
+
+    it('rejects when Google did not verify the email', async () => {
+      const callback = await run(
+        { _id: 'u1', email, provider: 'local', emailVerified: true },
+        false,
+      );
+      expect(updateUser).not.toHaveBeenCalled();
+      expect(callback).toHaveBeenCalledWith(
+        expect.objectContaining({ code: ErrorTypes.AUTH_FAILED }),
+      );
+    });
+
+    it('rejects a different Google account than the one already linked', async () => {
+      const callback = await run({
+        _id: 'u1',
+        email,
+        provider: 'local',
+        emailVerified: true,
+        googleId: 'someone-else',
+      });
+      expect(updateUser).not.toHaveBeenCalled();
+      expect(callback).toHaveBeenCalledWith(
+        expect.objectContaining({ code: ErrorTypes.AUTH_FAILED }),
+      );
+    });
+  });
+
   describe('Tenant-scoped config', () => {
     it('should call resolveAppConfigForUser for tenant user', async () => {
       const provider = 'google';

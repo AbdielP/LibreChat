@@ -88,6 +88,32 @@ const socialLogin =
         }
         await handleExistingUser(existingUser, avatarUrl, appConfig, email);
         return passResult(existingUser);
+      } else if (
+        // estudiante-ia-app: una cuenta con contraseña también entra con Google (o el proveedor
+        // que sea) si los dos confirman que el correo es suyo. Así nadie entra a la cuenta de otro.
+        existingUser?.provider === 'local' &&
+        !options.existingUsersOnly &&
+        !existingUser.tenantId &&
+        existingUser.emailVerified === true &&
+        emailVerified === true &&
+        id &&
+        (!existingUser[providerKey] || existingUser[providerKey] === id)
+      ) {
+        if (!existingUser[providerKey]) {
+          await updateUser(existingUser._id, { [providerKey]: id });
+          const linked = await findUser({ _id: existingUser._id, [providerKey]: id });
+          if (!linked) {
+            const linkError = new Error(ErrorTypes.AUTH_FAILED);
+            linkError.code = ErrorTypes.AUTH_FAILED;
+            return cb(linkError);
+          }
+          existingUser[providerKey] = id;
+          logger.info(
+            `[${provider}Login] Linked ${provider} to existing account [Email: ${email}]`,
+          );
+        }
+        await handleExistingUser(existingUser, avatarUrl, appConfig, email);
+        return passResult(existingUser);
       } else if (existingUser) {
         logger.info(
           `[${provider}Login] User ${email} already exists with provider ${existingUser.provider}`,
