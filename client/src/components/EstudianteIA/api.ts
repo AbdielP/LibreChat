@@ -90,11 +90,21 @@ export class BillingApiError extends Error {
   }
 }
 
+/** Zona horaria del navegador: billing-api deduce de ella el país del usuario para el chat. */
+function browserTimezone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+  } catch {
+    return '';
+  }
+}
+
 async function request<T>(path: string, token: string, init: RequestInit = {}): Promise<T> {
   const res = await fetch(`${BILLING_API_URL}${path}`, {
     ...init,
     headers: {
       Authorization: `Bearer ${token}`,
+      'X-Timezone': browserTimezone(),
       'Content-Type': 'application/json',
       ...init.headers,
     },
